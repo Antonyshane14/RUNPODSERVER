@@ -1,0 +1,52 @@
+# RTX 4090 Optimized Requirements for RunPod PyTorch Template
+
+# Core ML frameworks (optimized versions)
+torch>=2.1.0
+torchaudio>=2.1.0
+torchvision>=0.16.0
+
+# Audio processing libraries
+librosa>=0.10.1
+soundfile>=0.12.1
+pyannote.audio>=3.1.1
+speechbrain>=0.5.15
+
+# Speech processing
+openai-whisper>=20231117
+
+# Transformers and optimization
+transformers>=4.35.0
+accelerate>=0.24.0
+optimum>=1.14.0
+datasets>=2.14.0
+
+# Web framework
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+python-multipart>=0.0.6
+
+# Utilities
+requests>=2.31.0
+python-dotenv>=1.0.0
+numpy>=1.24.0
+scipy>=1.11.0
+
+# System monitoring
+psutil>=5.9.5
+gpustat>=1.1.1
+nvidia-ml-py>=12.535.0
+
+# Development utilities
+pydantic>=2.4.0
+typing-extensions>=4.8.0
+
+# Audio format support
+pydub>=0.25.1
+ffmpeg-python>=0.2.0
+
+# Additional ML utilities for RTX 4090
+einops>=0.7.0
+timm>=0.9.0
+
+# Memory optimization
+py-cpuinfo>=9.0.0

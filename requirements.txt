@@ -1,0 +1,33 @@
+# FastAPI and web server
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+
+# Audio processing
+librosa==0.10.1
+soundfile==0.12.1
+pydub==0.25.1
+
+# Machine Learning and AI
+torch>=2.0.0
+torchaudio>=2.0.0
+transformers==4.35.2
+whisper-openai==20231117
+
+# Speaker diarization
+pyannote.audio==3.1.1
+
+# Audio analysis (optional - for enhanced background noise detection)
+panns-inference==0.1.0
+
+# Utilities
+numpy>=1.24.0
+scipy>=1.10.0
+requests>=2.28.0
+
+# Development and testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+
+# Environment and logging
+python-dotenv==1.0.0
