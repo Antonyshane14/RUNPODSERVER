@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 # API Configuration
-API_HOST = "0.0.0.0"
+API_HOST = "0.0.0.0"  # This allows external connections
 API_PORT = 8000
 API_TITLE = "Audio Scam Detection API"
 API_VERSION = "1.0.0"
