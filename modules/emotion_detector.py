@@ -1,7 +1,7 @@
 import torch
 import torchaudio
 import torch.nn.functional as F
-from transformers import AutoProcessor, AutoModelForAudioClassification
+from transformers import AutoProcessor, AutoModelForAudioClassification, AutoConfig
 import logging
 from typing import Dict, Any
 import warnings
@@ -32,19 +32,38 @@ class OptimizedEmotionDetector:
     def load_model(self):
         """Load and optimize the emotion detection model for RTX 4090"""
         try:
+            # Check for HF_TOKEN
+            import os
+            hf_token = os.getenv("HF_TOKEN")
+            if not hf_token:
+                logger.error("❌ HF_TOKEN environment variable is required for Hugging Face model access")
+                logger.error("💡 Get your token from: https://huggingface.co/settings/tokens")
+                logger.error("🔧 Set it with: export HF_TOKEN='your_token_here'")
+                raise ValueError("HF_TOKEN environment variable must be set")
+            
             logger.info(f"🔧 Loading emotion model: {self.model_name}")
             
-            # Load with optimized settings
+            # Load with optimized settings and explicit tokenizer handling
+            logger.info("📥 Loading processor...")
             self.processor = AutoProcessor.from_pretrained(
                 self.model_name,
-                cache_dir="/workspace/models"
+                cache_dir="/workspace/models",
+                use_auth_token=hf_token,
+                trust_remote_code=True,
+                force_download=False,
+                resume_download=True
             )
             
+            logger.info("📥 Loading model...")
             self.model = AutoModelForAudioClassification.from_pretrained(
                 self.model_name,
                 cache_dir="/workspace/models",
                 torch_dtype=torch.float16 if self.mixed_precision else torch.float32,
-                device_map="auto" if torch.cuda.is_available() else None
+                device_map="auto" if torch.cuda.is_available() else None,
+                use_auth_token=hf_token,
+                trust_remote_code=True,
+                force_download=False,
+                resume_download=True
             ).to(self.device)
             
             # RTX 4090 optimizations
@@ -62,7 +81,45 @@ class OptimizedEmotionDetector:
             
         except Exception as e:
             logger.error(f"❌ Error loading emotion model: {e}")
-            raise
+            
+            # Try alternative approach for problematic models
+            if "expected str, bytes or os.PathLike object, not NoneType" in str(e):
+                logger.warning("🔄 Trying alternative loading approach for tokenizer issue...")
+                try:
+                    # Force download all files first
+                    config = AutoConfig.from_pretrained(
+                        self.model_name,
+                        use_auth_token=hf_token,
+                        cache_dir="/workspace/models"
+                    )
+                    
+                    # Try loading processor again
+                    self.processor = AutoProcessor.from_pretrained(
+                        self.model_name,
+                        cache_dir="/workspace/models",
+                        use_auth_token=hf_token,
+                        local_files_only=False,
+                        trust_remote_code=True
+                    )
+                    
+                    self.model = AutoModelForAudioClassification.from_pretrained(
+                        self.model_name,
+                        config=config,
+                        cache_dir="/workspace/models",
+                        torch_dtype=torch.float16 if self.mixed_precision else torch.float32,
+                        device_map="auto" if torch.cuda.is_available() else None,
+                        use_auth_token=hf_token,
+                        local_files_only=False,
+                        trust_remote_code=True
+                    ).to(self.device)
+                    
+                    logger.info("✅ Alternative loading successful")
+                    
+                except Exception as fallback_error:
+                    logger.error(f"❌ Fallback loading also failed: {fallback_error}")
+                    raise fallback_error
+            else:
+                raise
     
     def warmup_model(self):
         """Warmup model for consistent performance"""

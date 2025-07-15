@@ -30,8 +30,7 @@ SPEAKER_SEGMENTS_DIR = BASE_DIR / "speaker_segments"
 
 # Hugging Face Token (must be set as environment variable)
 HF_TOKEN = os.getenv("HF_TOKEN", "")
-if not HF_TOKEN:
-    raise ValueError("HF_TOKEN environment variable must be set for Hugging Face model access")
+# Note: HF_TOKEN will be validated when models are actually loaded
 
 # Processing Configuration
 MAX_WORKERS = 4  # For parallel processing

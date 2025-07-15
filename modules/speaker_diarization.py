@@ -33,6 +33,12 @@ class SpeakerDiarizer:
     def load_pipeline(self):
         """Load the speaker diarization pipeline"""
         try:
+            if not self.hf_token:
+                logger.error("❌ HF_TOKEN is required for speaker diarization model access")
+                logger.error("💡 Get your token from: https://huggingface.co/settings/tokens")
+                logger.error("🔧 Set it with: export HF_TOKEN='your_token_here'")
+                raise ValueError("HF_TOKEN is required for pyannote.audio model access")
+                
             logger.info("Loading speaker diarization pipeline...")
             self.pipeline = Pipeline.from_pretrained(
                 "pyannote/speaker-diarization-3.1",
