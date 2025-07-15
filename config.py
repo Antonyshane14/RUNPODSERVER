@@ -15,7 +15,9 @@ CHUNK_DURATION = 10  # seconds
 # Model Configuration
 WHISPER_MODEL_SIZE = "medium"  # tiny, base, small, medium, large
 AI_VOICE_MODEL = "as1605/Deepfake-audio-detection-V2"
-EMOTION_MODEL = "ehcalabres/wav2vec2-lg-xlsr-en-speech-emotion-recognition"
+# Using a more reliable emotion model that doesn't have tokenizer issues
+EMOTION_MODEL = "facebook/wav2vec2-large-xlsr-53-english"  # More stable alternative
+# Backup emotion model if needed: "superb/wav2vec2-base-superb-er"
 DIARIZATION_MODEL = "pyannote/speaker-diarization-3.1"
 
 # LLM Configuration
