@@ -26,5 +26,5 @@ COPY . .
 # Expose the API port (default 8000, can be changed via config)
 EXPOSE 8000
 
-# Command to run the FastAPI app with Uvicorn
-CMD ["python", "main.py"]
+# Use uvicorn for production serverless deployment
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
